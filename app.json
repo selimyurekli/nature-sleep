@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Relaxing Sounds",
-    "slug": "ambient-sounds-app",
+    "slug": "aurasleep-doga-icinde-uyu",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -23,10 +23,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#121212"
-      }
+      },
+      "package": "com.selimyurekli.aurasleepdogaicindeuyu"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "f2b16b03-8036-46f4-bf39-f33361bd46d0"
+      }
+    },
+    "owner": "selimyurekli"
   }
 }

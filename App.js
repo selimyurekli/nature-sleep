@@ -26,18 +26,39 @@ export default function App() {
     whitenoise: require('./assets/sounds/whitenoise.mp3'),
   };
 
+  // Verify sound files are accessible
+  useEffect(() => {
+    const verifySoundFiles = () => {
+      for (const id in soundFiles) {
+        if (!soundFiles[id]) {
+          console.error(`Sound file for ${id} is not accessible`);
+        }
+      }
+    };
+    
+    verifySoundFiles();
+  }, []);
+
   // Ses modunu ayarla
   useEffect(() => {
     const setupAudio = async () => {
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: false,
-        staysActiveInBackground: true,
-        interruptionModeIOS: Audio.INTERRUPTION_MODE_IOS_DO_NOT_MIX,
-        playsInSilentModeIOS: true,
-        shouldDuckAndroid: true,
-        interruptionModeAndroid: Audio.INTERRUPTION_MODE_ANDROID_DO_NOT_MIX,
-        playThroughEarpieceAndroid: false,
-      });
+      try {
+        await Audio.setAudioModeAsync({
+          allowsRecordingIOS: false,
+          staysActiveInBackground: true,
+          interruptionModeIOS: 1,
+          playsInSilentModeIOS: true,
+          shouldDuckAndroid: true,
+          interruptionModeAndroid: 1,
+          playThroughEarpieceAndroid: false,
+        });
+        
+        // Preload sound files
+        await preloadSounds();
+      } catch (error) {
+        console.error('Error setting audio mode:', error);
+        Alert.alert('Ses Hatası', 'Ses ayarları yapılandırılırken bir hata oluştu.');
+      }
     };
 
     setupAudio();
@@ -48,6 +69,26 @@ export default function App() {
       unloadAllSounds();
     };
   }, []);
+
+  // Preload sound files to ensure they're available
+  const preloadSounds = async () => {
+    try {
+      for (const id in soundFiles) {
+        try {
+          const { sound } = await Audio.Sound.createAsync(
+            soundFiles[id],
+            { volume: 0 },
+            null
+          );
+          await sound.unloadAsync();
+        } catch (error) {
+          console.error(`Error preloading sound ${id}:`, error);
+        }
+      }
+    } catch (error) {
+      console.error('Error in preloading sounds:', error);
+    }
+  };
 
   const loadSettings = async () => {
     try {
@@ -102,25 +143,58 @@ export default function App() {
       // Ses nesnesi yoksa oluştur
       if (!soundObject) {
         try {
+          const soundFile = soundFiles[id];
+          
+          // First unload any existing sound to prevent issues
+          if (newSounds[soundIndex].sound) {
+            await newSounds[soundIndex].sound.unloadAsync();
+          }
+          
+          // Create and load the sound with explicit options
           const { sound } = await Audio.Sound.createAsync(
-            soundFiles[id], // ID'ye uygun ses dosyasını seç
+            soundFile,
             { 
               isLooping: true, 
               volume: newSounds[soundIndex].volume,
-              shouldPlay: true 
+              shouldPlay: true,
+              progressUpdateIntervalMillis: 1000,
+              positionMillis: 0,
+              rate: 1.0,
+              shouldCorrectPitch: false,
+            },
+            (status) => {
+              if (status.error) {
+                console.error(`Error playing ${id}:`, status.error);
+              }
             }
           );
+          
+          // Explicitly play the sound
+          await sound.playAsync();
           
           soundObject = sound;
           newSounds[soundIndex].sound = soundObject;
         } catch (e) {
-          console.log('Ses dosyasını yüklerken hata:', e);
+          console.error(`Ses dosyasını yüklerken hata (${id}):`, e);
           // Ses dosyası yüklenemedi, hata göster
           Alert.alert('Hata', `Ses dosyası yüklenirken bir sorun oluştu: ${e.message}`);
           return;
         }
       } else {
-        await soundObject.playAsync();
+        // Get current status
+        const status = await soundObject.getStatusAsync();
+        
+        if (status.isLoaded) {
+          if (!status.isPlaying) {
+            await soundObject.playAsync();
+          }
+        } else {
+          // Reload the sound if it's not loaded
+          await soundObject.unloadAsync();
+          newSounds[soundIndex].sound = null;
+          // Recursively call playSound to create a new sound
+          return playSound(id);
+        }
       }
       
       newSounds[soundIndex].isPlaying = true;
@@ -138,15 +212,23 @@ export default function App() {
       const newSounds = [...sounds];
       const soundIndex = newSounds.findIndex(s => s.id === id);
       
-      if (soundIndex === -1 || !newSounds[soundIndex].sound) return;
+      if (soundIndex === -1 || !newSounds[soundIndex].sound) {
+        return;
+      }
       
-      await newSounds[soundIndex].sound.pauseAsync();
+      // Get current status
+      const status = await newSounds[soundIndex].sound.getStatusAsync();
+      
+      if (status.isLoaded && status.isPlaying) {
+        await newSounds[soundIndex].sound.pauseAsync();
+      }
+      
       newSounds[soundIndex].isPlaying = false;
       setSounds(newSounds);
       saveSettings();
       
     } catch (error) {
-      console.error('Failed to pause sound', error);
+      console.error(`Failed to pause sound ${id}:`, error);
     }
   };
 
