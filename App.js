@@ -48,7 +48,6 @@ const allSoundsData = [
   { id: 'harp', name: 'Harp', icon: 'musical-note', category: 'enstrüman', volume: 0.5, isPlaying: false, sound: null },
   
   // Karışım Sesleri Kategorisi
-  { id: 'rainpiano', name: 'Yağmur ve Piyano', icon: 'musical-notes', category: 'karışım', volume: 0.5, isPlaying: false, sound: null },
   { id: 'nighttrain', name: 'Gece Treni', icon: 'train', category: 'karışım', volume: 0.5, isPlaying: false, sound: null },
   { id: 'meditationmix', name: 'Meditasyon Karışımı', icon: 'flower', category: 'karışım', volume: 0.5, isPlaying: false, sound: null },
 ];
@@ -63,32 +62,31 @@ const soundFiles = {
   whitenoise: require('./assets/sounds/whitenoise.mp3'),
   
   // Yeni sesler için yer tutucular (gerçek uygulamada bunlar gerçek ses dosyaları olacaktır)
-  waterfall: require('./assets/sounds/rain.mp3'),  // Geçici olarak mevcut sesleri kullanıyoruz
-  summernight: require('./assets/sounds/rain.mp3'),
-  birds: require('./assets/sounds/rain.mp3'),
-  thunderstorm: require('./assets/sounds/rain.mp3'),
-  fire: require('./assets/sounds/rain.mp3'),
-  seaside: require('./assets/sounds/waves.mp3'),
+  waterfall: require('./assets/sounds/waterfall.mp3'),  // Geçici olarak mevcut sesleri kullanıyoruz
+  summernight: require('./assets/sounds/summernight.mp3'),
+  birds: require('./assets/sounds/birds.mp3'),
+  thunderstorm: require('./assets/sounds/thunderstorm.mp3'),
+  fire: require('./assets/sounds/fire.mp3'),
+  seaside: require('./assets/sounds/seaside.mp3'),
   
-  cafe: require('./assets/sounds/rain.mp3'),
-  library: require('./assets/sounds/rain.mp3'),
-  garden: require('./assets/sounds/wind.mp3'),
+  cafe: require('./assets/sounds/cafe.mp3'),
+  library: require('./assets/sounds/library.mp3'),
+  garden: require('./assets/sounds/garden.mp3'),
   rainywindow: require('./assets/sounds/rain.mp3'),
   
-  tibetbowls: require('./assets/sounds/rain.mp3'),
-  ohm: require('./assets/sounds/rain.mp3'),
-  pinknoise: require('./assets/sounds/whitenoise.mp3'),
-  brownnoise: require('./assets/sounds/whitenoise.mp3'),
-  space: require('./assets/sounds/rain.mp3'),
+  tibetbowls: require('./assets/sounds/tibetbowls.mp3'),
+  ohm: require('./assets/sounds/ohm.mp3'),
+  pinknoise: require('./assets/sounds/pinknoise.mp3'),
+  brownnoise: require('./assets/sounds/brownnoise.mp3'),
+  space: require('./assets/sounds/space.mp3'),
   
-  piano: require('./assets/sounds/rain.mp3'),
-  guitar: require('./assets/sounds/rain.mp3'),
-  flute: require('./assets/sounds/rain.mp3'),
-  harp: require('./assets/sounds/rain.mp3'),
+  piano: require('./assets/sounds/piano.mp3'),
+  guitar: require('./assets/sounds/guitar.mp3'),
+  flute: require('./assets/sounds/flute.mp3'),
+  harp: require('./assets/sounds/harp.mp3'),
   
-  rainpiano: require('./assets/sounds/rain.mp3'),
-  nighttrain: require('./assets/sounds/rain.mp3'),
-  meditationmix: require('./assets/sounds/rain.mp3'),
+  nighttrain: require('./assets/sounds/train.mp3'),
+  meditationmix: require('./assets/sounds/meditation.mp3'),
 };
 
 // Sound colors for UI
